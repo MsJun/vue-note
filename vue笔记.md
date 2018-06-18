@@ -1308,7 +1308,7 @@ ul li{
 </style>
 ~~~
 
-	#### 2.导航固定，内容固定
+####2.导航固定，内容固定
 
 ~~~
 <template >
@@ -1368,7 +1368,7 @@ ul li{
 
 ~~~
 
-	#### 3.导航和内容接口获取
+#### 3.导航和内容接口获取
 
 ~~~
 <template>
@@ -1464,6 +1464,96 @@ export default{
 </style>
 
 ~~~
+
+### 12.vue-Preview
+
+- 下载
+
+  ~~~
+  npm i vue-preview -S
+  ~~~
+
+- 导入（在main.js中）
+
+  ~~~
+  import VuePreview from 'vue-preview'
+
+  Vue.use(VuePreview)
+
+  import './assets/css/base.css'
+  ~~~
+
+- 在组件中使用
+
+  ~~~
+  <template>
+      <div class="thumbs">
+      	<vue-preview :slides="curimg" @close="handleClose"></vue-preview>
+       </div>
+   </template>
+   
+   <script>
+      export default{
+          data(){
+              return{
+                  id:0,
+                  curimg:[]
+              }
+          },
+          created(){
+              this.id = this.$route.params.id
+              this.getcurimg()
+          },
+          methods:{
+              async getcurimg(){
+                  let data = await this.$http.get('/api/getthumimages/'+this.id)
+                  console.log(data)
+                  if(data.status==200){
+                      data.data.message.forEach(item=>{
+                          item.w = 600
+                          item.h = 600
+                          item.msrc = item.src
+                      })
+                      this.curimg = data.data.message
+                  }
+              },
+              handleClose(){
+
+              }
+          }
+      }
+
+  </script>
+   
+  ~~~
+
+- 在全局css中配置样式（base.css）
+
+  ~~~
+  .thumbs{
+  	display: flex
+  }
+  .thumbs>div{
+  	width:100%;
+  }
+  .thumbs .my-gallery{
+  	display: flex;
+  	flex-wrap: wrap
+  }
+  .thumbs .my-gallery figure{
+  	margin:10px;
+  	box-shadow: 0 0 10px #ccc;
+  }
+  .thumbs .my-gallery figure img{
+  	width: 100px;
+  	vertical-align: middle;
+  }
+
+  ~~~
+
+  ​
+
+
 
 
 
