@@ -1552,7 +1552,7 @@ export default{
   ~~~
 
 
-###13 图片懒加载（vue-lazyload）
+### 13 图片懒加载（vue-lazyload）
 
 ​      https://github.com/hilongjw/vue-lazyload
 
