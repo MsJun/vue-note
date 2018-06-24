@@ -1465,7 +1465,7 @@ export default{
 
 ~~~
 
-### 12.vue-Preview
+### 12.vue-Preview（缩略图）
 
 - 下载
 
@@ -1551,9 +1551,84 @@ export default{
 
   ~~~
 
-  ​
+
+###13 图片懒加载（vue-lazyload）
+
+​      https://github.com/hilongjw/vue-lazyload
+
+- 下载
+
+  ~~~
+  npm install vue-lazyload -D 
+  ~~~
+
+-  在main.js中
+
+  ~~~
+  import Vue from 'vue'
+  import App from './App.vue'
+  import VueLazyload from 'vue-lazyload'
+  Vue.use(VueLazyload, {
+    preLoad: 1.3,
+    error: 'dist/error.png',
+    loading: 'dist/loading.gif',
+    attempt: 1
+  })
+  ~~~
+
+- vue组件中
+
+  ~~~
+  <ul>
+    <li v-for="img in list">
+      <img v-lazy="img.src" >
+    </li>
+  </ul>
+  ~~~
+
+###14.排列字母
+
+~~~
+ var arr = ['A','C','E','B','D','F'];
+ arr.sort((a,b)=>{
+ return a.charCodeAt(0)-b.charCodeAt(0)
+ })
+ console.log(arr)
+~~~
+
+### 15.直接在{{}}调用方法
+
+~~~
+<template>
+    <div class="song-list">
+        <ul>
+            <li v-for='(item,index) in songs' :key='index'>
+                <h3>{{item.name}}</h3>
+                //直接在表达式中使用
+                <p>{{getinit(item)}}</p>
+            </li>
+        </ul>
+    </div>
+</template>
+<script>
+    export default{
+        methods:{
+        	//定义的方法
+            getinit(item){
+            	//返回处理好的数据
+               return item.singer+'·'+item.album
+            }
+        }
+       
+    }
+</script>
+<style scoped>
+
+</style>
 
 
+~~~
 
+​		
 
 
