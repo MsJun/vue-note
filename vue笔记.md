@@ -1596,7 +1596,7 @@ export default{
  console.log(arr)
 ~~~
 
-### 15.直接在{{}}调用方法
+### 15.直接在{{}}调用methods中的方法
 
 ~~~
 <template>
@@ -1629,6 +1629,90 @@ export default{
 
 ~~~
 
-​		
+### 16.vue-awesome-swiper
+
+- 下载
+
+  ~~~
+  npm install vue-awesome-swiper --save
+  ~~~
+
+-  在main.js中引入
+
+  ~~~
+  import Vue from 'vue'
+  import VueAwesomeSwiper from 'vue-awesome-swiper'
+  import 'swiper/dist/css/swiper.css'
+  Vue.use(VueAwesomeSwiper）
+  ~~~
+
+- 在组件中搭建结构
+
+  ~~~
+  <template>
+  <div class="swiper-banner">
+        <swiper :options="swiperOption" ref="awesomeSwiper" v-if="bannerlist.length">
+          <swiper-slide v-for='(item,index) in bannerlist' :key='item.index'>
+            <a :href="item.url">
+              <img :src="item.img" alt="" width="100%">
+            </a>
+          </swiper-slide>
+          <div class="swiper-pagination" slot="pagination"></div>
+         <!--  <div class="swiper-button-prev" slot="button-prev"></div>
+          <div class="swiper-button-next" slot="button-next"></div> -->
+        </swiper>
+   </div>
+   </template>
+   <script>
+     export default{
+       data(){
+         return{
+          bannerlist:[],
+          swiperOption: {
+            notNextTick: true,
+            paginationClickable: true,
+            observer:true,
+            spaceBetween: 0,
+            loop:true,
+            autoHeight: true,
+            centeredSlides: true,
+            observer:true,//修改swiper自己或子元素时，自动初始化swiper
+            observeParents:false,//修改swiper的父元素时，自动初始化swiper
+            autoplay: {
+              delay: 1000,
+              stopOnLastSlide: true,
+              disableOnInteraction: false
+            },
+            pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+            },
+            onSlideChangeEnd: function(swiper){
+          　　　swiper.update();
+            }
+           }
+         }
+       },
+       created(){
+         this.getbanner()
+       },
+       methods:{
+         async getbanner(){
+           let data = await this.$http.get('/api/getlunbo')
+           console.log(data)
+           if(data.status==200){
+             if(data.data.message){
+               this.bannerlist = data.data.message
+             }
+           }
+
+
+         }
+       }
+     }
+   </script>
+  ~~~
+
+  ​
 
 
