@@ -168,7 +168,7 @@ rules: [
     getters:{
       countinfo:function(state){
         	return '---'+state.count+'---'
-      }
+      } 
     },
     //1.异步执行的方法
     actions:{
@@ -176,8 +176,8 @@ rules: [
     	//在actions中可以定义一些方法，来提交对应的mutations中的方法
     	//context是一个形式参数，任何一个都可以
       newadd(context){
-      //在actions中不能直接操作state中的数据，如果想修改state的值只能通过在actions中提交对应的		//mutations
-        context.commit('add')
+      //在actions中不能直接操作state中的数据，如果想修改state的值只能通过在actions中提交对应的		//mutations中的方法
+        context.commit('add',1)
       }
     }
     
@@ -598,6 +598,21 @@ export default router
   reduce(1,2)
 
   ```
+
+- 可以采用* as 的方式
+
+  ~~~
+  import * as type from './demo.js'
+
+  在demo中定义的方法就是type的属性
+
+  通过type.属性名的方式调用
+
+  type.add(1,2)
+  type.reduce(1,2)
+  ~~~
+
+  ​
 
 - export default导出一个函数（只能出现一次）
 
@@ -1465,6 +1480,42 @@ export default{
 
 ~~~
 
+#### 4.类名切换
+
+~~~
+<template>
+	 <div :class="{'act':flag==true,'cur':flag==false}" @click='toggle'>点击切换</div>
+</template>
+<script>
+	export default{
+        data(){
+            return{
+                flag:true
+            }
+        },
+        methods:{
+            toggle(){
+                this.flag = !this.flag
+            }
+        }
+	}
+</script>
+<style>
+	.act{
+      width: 100px;
+      height: 100px;
+      background: lightblue;
+    }
+    .cur{
+      width: 200px;
+      height: 200px;
+      background: pink;
+    }
+</style>
+~~~
+
+
+
 ### 12.vue-Preview（缩略图）
 
 - 下载
@@ -1705,6 +1756,7 @@ export default{
                this.bannerlist = data.data.message
              }
            }
+  ~~~
 
 
          }
@@ -1713,6 +1765,8 @@ export default{
    </script>
   ~~~
 
-  ​
+  
 
 
+
+  ~~~
