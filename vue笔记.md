@@ -1813,7 +1813,7 @@ export default{
   ~~~
 
 
-### 17弹窗dialog
+### 17.弹窗dialog
 
 ~~~
 <template>
