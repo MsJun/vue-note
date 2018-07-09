@@ -413,6 +413,9 @@ fragment：hash 锚点，定位页面的某一位置
                 	set(){
                       
                 	}
+                },
+                sum(){
+                   return parseFloat(this.num1)+parseFloat(this.num2) 
                 }
             }
         })
@@ -431,12 +434,12 @@ fragment：hash 锚点，定位页面的某一位置
             },
             //普通监听
             watch:{
-              监听数据:function(val,old){
+              监听数据(val,old){
                 
               }，
               //深度监听
               监听数据:{
-                handler:function(val,old){
+                handler(val,old){
                   
                 },
                 deep: true
@@ -468,6 +471,49 @@ router.beforeEach((to, from, next) => {
   next()
 })
 export default router
+~~~
+
+### 9.组件切换
+
+~~~
+<template>
+  <div>
+      <input type="button" value="切换" @click='toggle'>
+  		//通过 :is动态绑定组件    
+      <div :is='actView'> </div>
+  </div>
+</template>
+
+<script>
+//引入子组件
+import one from './one.vue'
+import two from './two.vue'
+export default {
+  components:{
+    one,
+    two
+  },
+  data(){
+    return{
+      actView:'one'
+    }
+  },
+  methods:{
+    toggle(){
+      if(this.actView=='one'){
+          this.actView = 'two'
+      }else{
+        this.actView = 'one'
+      }
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>
+
 ~~~
 
 
@@ -1484,7 +1530,7 @@ export default{
 
 ~~~
 <template>
-	 <div :class="{'act':flag==true,'cur':flag==false}" @click='toggle'>点击切换</div>
+	 <div :class="{'act':flag,'cur':!flag}" @click='toggle'>点击切换</div>
 </template>
 <script>
 	export default{
@@ -1709,8 +1755,8 @@ export default{
             </a>
           </swiper-slide>
           <div class="swiper-pagination" slot="pagination"></div>
-         <!--  <div class="swiper-button-prev" slot="button-prev"></div>
-          <div class="swiper-button-next" slot="button-next"></div> -->
+         	<div class="swiper-button-prev" slot="button-prev"></div>
+          <div class="swiper-button-next" slot="button-next"></div>
         </swiper>
    </div>
    </template>
@@ -1738,6 +1784,10 @@ export default{
               el: '.swiper-pagination',
               clickable: true,
             },
+            navigation: {
+                  nextEl: '.swiper-button-next',
+                  prevEl: '.swiper-button-prev',
+          },
             onSlideChangeEnd: function(swiper){
           　　　swiper.update();
             }
@@ -1756,17 +1806,147 @@ export default{
                this.bannerlist = data.data.message
              }
            }
-  ~~~
-
-
-         }
-       }
+      }
      }
-   </script>
+   }
+      </script>
   ~~~
 
-  
+
+### 17弹窗dialog
+
+~~~
+<template>
+  <div>
+    <div class="dialog-wrap">
+      <div class="dialog-cover"  v-if="isShow" @click="closeMyself"></div>
+      <transition name="drop">
+        <div class="dialog-content"  v-if="isShow">
+          <p class="dialog-close" @click="closeMyself">x</p>
+          <slot>empty</slot>
+        </div>
+      </transition>
+    </div>
+  </div>
+</template>
+<script>
+  export default {
+    props: {
+      isShow: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data () {
+      return {
+
+      }
+    },
+    methods: {
+      closeMyself () {
+        this.$emit('on-close')
+      }
+    }
+  }
+</script>
+<style scoped>
+  .drop-enter-active {
+    transition: all .5s ease;
+  }
+  .drop-leave-active {
+    transition: all .3s ease;
+  }
+  .drop-enter {
+    transform: translateY(-500px);
+  }
+  .drop-leave-active {
+    transform: translateY(-500px);
+  }
+
+  .dialog-wrap {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+  .dialog-cover {
+    background: #000;
+    opacity: .3;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .dialog-content {
+    width: 50%;
+    position: fixed;
+    max-height: 50%;
+    overflow: auto;
+    background: #fff;
+    top: 20%;
+    left: 50%;
+    margin-left: -25%;
+    z-index: 999;
+    border: 2px solid #464068;
+    padding: 2%;
+    line-height: 1.6;
+
+  }
+  .dialog-close {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .dialog-close:hover {
+    color: #4fc08d;
+  }
+</style>
+~~~
+
+- `isShow`  布尔值，控制弹窗的显示隐藏，由父元素传入
+- `on-close`，子元素传入给给父元素的值
+
+在父组件中使用
+
+~~~
+<template>
+	<div>
+		<input type="button" value="登录" @click="loginDialog">
+		<my-dialog :isShow='isflag' @on-close="closeDialog('isflag')">
+			 作用域插槽，可以写任何东西，可以引进别的组件，作为弹窗的内容
+		</my-dialog>
+	</div>
+</template>
+<script>
+import myDialog from './components/base/dialog'
+export default {
+  components:{
+    myDialog,
+  },
+  data(){
+    return{
+      isflag:false,
+    }
+  },
+  methods:{
+    // 登录弹窗
+    loginDialog(){
+      this.isflag = true
+    },
+    //关闭弹窗
+    closeDialog(attr){
+      this[attr] = false
+    }
+  }
+}
+</script>
+
+~~~
 
 
 
-  ~~~
