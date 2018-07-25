@@ -1,4 +1,4 @@
-## 1.vue知识点
+##  1.vue知识点
 
 ### 1.生命周期函数
 
@@ -960,6 +960,7 @@ Vue.filter('dateFormat', function (dataStr, pattern = "YYYY-MM-DD HH:mm:ss") {
       			// this.$router 是专门来实现编程式导航的；
       			//跳转到/good/gooddesc/并将参数带过去
                this.$router.push('/good/gooddesc/'+this.goodinfo.id)
+               this.$router.push({path:'/good/gooddesc',params:{id:this.goodinfo.id}})
            }
        }
     }
@@ -1322,9 +1323,9 @@ this.$router.push(this.$route.query.redirect || '/')
 <template >
     <div class="tmp">
         <ul>
-            <li @click="getpic(flag=0)" :class="{'act':flag==0}">24热门</li>
-            <li @click='getpic(flag=1)' :class="{'act':flag==1}">七日热门</li>
-            <li @click="getpic(flag=2)" :class="{'act':flag==2}">三十日热门</li>
+            <li @click="getpic(0)" :class="{'act':flag==0}">24热门</li>
+            <li @click='getpic(1)' :class="{'act':flag==1}">七日热门</li>
+            <li @click="getpic(2)" :class="{'act':flag==2}">三十日热门</li>
         </ul>
     </div>
 </template>
@@ -1339,7 +1340,8 @@ this.$router.push(this.$route.query.redirect || '/')
             this.getpic(this.flag)
         },
         methods:{
-            getpic(){
+            getpic(index){
+            	this.flag = index
                 this.$http.get('/api/getimages/'+this.flag)
                 .then(res=>{
                     console.log(res)
@@ -2062,3 +2064,96 @@ export default {
 
 ~~~
 
+### 19.格式化金额
+
+- 新建一个文件**currency.js**
+
+  ~~~
+  const digitsRE = /(\d{3})(?=\d)/g
+
+  export function currency (value, currency, decimals) {
+    value = parseFloat(value)
+    if (!isFinite(value) || (!value && value !== 0)) return ''
+    currency = currency != null ? currency : '$'
+    decimals = decimals != null ? decimals : 2
+    var stringified = Math.abs(value).toFixed(decimals)
+    var _int = decimals
+      ? stringified.slice(0, -1 - decimals)
+      : stringified
+    var i = _int.length % 3
+    var head = i > 0
+      ? (_int.slice(0, i) + (_int.length > 3 ? ',' : ''))
+      : ''
+    var _float = decimals
+      ? stringified.slice(-1 - decimals)
+      : ''
+    var sign = value < 0 ? '-' : ''
+    return sign + currency + head +
+      _int.slice(i).replace(digitsRE, '$1,') +
+      _float
+  }
+  ~~~
+
+- 定义全局过滤器
+
+  ~~~
+  import {currency} form './currency.js'
+  ~~~
+
+- 使用（默认保留两位小数）
+
+  ~~~
+  {{金额数据 | currency("$")}}
+  ~~~
+
+### 20.展开收起
+
+- 需求：后台返回10条数据，默认页面只显示3条，点击展开将全部数据显示，收起只显示3条默认数据
+
+  ~~~
+  <div id="app">
+  		<ul>
+  			<li v-for='item in listFilter'>{{item.shopName}}</li>
+  		</ul>
+  		<div class="more">
+  			<span @click='slideDown'>展开
+  				//箭头
+  				<i 
+  				:class="[{'icon-ctrl2':limit==3},{'icon-ctrl':limit!=3}]"
+  				>
+  				</i>
+  			</span>
+  		</div>
+  </div>
+  <script>
+
+  		new Vue({
+  			el:"#app",
+  			data:{
+  				// 定义变量用来显示数组的长度，默认页面显示三条
+  				limit:3,
+  				// 模拟后台返回的数据
+  				list:[{"shopName":"商品1"},{"shopName":"商品2"},{"shopName":"商品3"},						{"shopName":"商品4"},{"shopName":"商品5"},{"shopName":"商品6"},]
+  			},
+  			// 默认显示三条数据
+  			computed:{
+  				listFilter(){
+  					// 进行截取
+  					return this.list.slice(0,this.limit)
+  				}
+  			},
+  			methods:{
+  				slideDown(){
+  					if(this.limit==3){
+  						this.limit = this.list.length
+  					}else{
+  						this.limit = 3
+  					}
+  				}
+  			}
+
+  		})
+  	</script>
+  ~~~
+
+  ​
