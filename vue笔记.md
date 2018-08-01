@@ -258,7 +258,7 @@ rules: [
       		//如果在组件中要调用mutations中的方法,只能通过this.$store.commit('方法名') 调用
       		this.$store.commit('add')
        	}
-       },
+       }, 
        
       computed:{
       	//自定义计算属性
@@ -2094,13 +2094,25 @@ export default {
   }
   ~~~
 
-- 定义全局过滤器
+- (1)在某个组件中引入，注册
 
   ~~~
   import {currency} form './currency.js'
+   export default{
+       filters:{
+              currency
+          }
+   }
   ~~~
 
-- 使用（默认保留两位小数）
+- (2)在main.js全局注册
+
+  ~~~
+  import {currency} from './util/currentcy'
+  Vue.filter("currency",currency);
+  ~~~
+
+- 使用
 
   ~~~
   {{金额数据 | currency("$")}}
